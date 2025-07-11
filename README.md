@@ -8,12 +8,13 @@ This script is environment-aware and works on both **Wayland (using `wl-copy`)**
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/YOUR_USERNAME/filet-content-copier.git](https://github.com/YOUR_USERNAME/file-content-copier.git)
+    git clone https://github.com/YOUR_USERNAME/filet-content-copier.git
     ```
 
 2.  **Navigate into the directory:**
     ```bash
-    cd file-content-copier
+    cd file-content
+    -copier
     ```
 
 3.  **Run the installer:**
