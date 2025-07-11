@@ -13,7 +13,7 @@ This script is environment-aware and works on both **Wayland (using `wl-copy`)**
 
 2.  **Navigate into the directory:**
     ```bash
-    cd file-conten-copier
+    cd file-content-copier
     ```
 
 3.  **Run the installer:**
