@@ -7,7 +7,7 @@ if command -v wl-copy &> /dev/null; then
 elif command -v xclip &> /dev/null; then
     COPY_CMD="xclip -selection clipboard"
 else
-    zenity --error --text="Error: Neither wl-copy nor xclip is installed." --title="Dependency Missing" --timeout=0 2>/dev/null
+    zenity --error --text="Error: Neither wl-copy nor xclip is installed." --title="Dependency Missing" --timeout=1 2>/dev/null
     exit 1
 fi
 
@@ -19,10 +19,10 @@ SELECTED_FILE=$(zenity --file-selection --title="Select a Text or HTML File" \
 # --- Check selection and copy the content ---
 if [ -f "$SELECTED_FILE" ] && $COPY_CMD < "$SELECTED_FILE"; then
     # Success notification
-    zenity --info --text="File content successfully copied." --title="Success" --timeout=0 2>/dev/null
+    zenity --info --text="File content successfully copied." --title="Success" --timeout=0.8 2>/dev/null
 else
     # Failure notification
-    zenity --error --text="File copy failed or was cancelled." --title="Failure" --timeout=0 2>/dev/null
+    zenity --error --text="File copy failed or was cancelled." --title="Failure" --timeout=1 2>/dev/null
 fi
 
 exit 0
