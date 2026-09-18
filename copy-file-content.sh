@@ -75,12 +75,39 @@ if [[ -z "$SELECTED_FILE" ]]; then
 fi
 
 # --- Validate and Copy Content ---
-if [[ -f "$SELECTED_FILE" && -r "$SELECTED_FILE" ]] && $COPY_CMD < "$SELECTED_FILE"; then
+if [[ ! -f "$SELECTED_FILE" || ! -r "$SELECTED_FILE" ]]; then
     FILENAME=$(basename "$SELECTED_FILE")
-    notify "File Copied" "Copied content of '$FILENAME' to clipboard." "low" "󰅍"
-    exit 0
-else
-    FILENAME=$(basename "$SELECTED_FILE")
-    notify "Copy Failed" "Failed to copy content of '$FILENAME'." "critical" "󰅙"
+    notify "Copy Failed" "Cannot read file '$FILENAME'." "critical" "󰅙"
     exit 1
+fi
+
+FILENAME=$(basename "$SELECTED_FILE")
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+HTML_CONVERTER="$SCRIPT_DIR/html_to_text.py"
+
+# If python3 and our HTML converter are available, use smart HTML detection
+if command -v python3 &>/dev/null && [[ -x "$HTML_CONVERTER" ]]; then
+    CONTENT=$(python3 "$HTML_CONVERTER" "$SELECTED_FILE")
+    CONVERTED=$?
+    if [[ $CONVERTED -eq 0 ]] && printf '%s' "$CONTENT" | $COPY_CMD; then
+        # Check if the file was actually HTML (for notification message)
+        if python3 "$HTML_CONVERTER" --check-html "$SELECTED_FILE" 2>/dev/null; then
+            notify "File Copied" "Copied '$FILENAME' as clean text (HTML converted)." "low" "󰅍"
+        else
+            notify "File Copied" "Copied content of '$FILENAME' to clipboard." "low" "󰅍"
+        fi
+        exit 0
+    else
+        notify "Copy Failed" "Failed to copy content of '$FILENAME'." "critical" "󰅙"
+        exit 1
+    fi
+else
+    # Fallback: copy raw file content (original behavior)
+    if $COPY_CMD < "$SELECTED_FILE"; then
+        notify "File Copied" "Copied content of '$FILENAME' to clipboard." "low" "󰅍"
+        exit 0
+    else
+        notify "Copy Failed" "Failed to copy content of '$FILENAME'." "critical" "󰅙"
+        exit 1
+    fi
 fi

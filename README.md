@@ -8,6 +8,7 @@ Fully compatible with **Omarchy Quattro**, generic **Wayland (using `wl-copy`)**
 
 ## Features
 
+- **Smart HTML-to-Text Conversion**: Automatically detects HTML content and converts it to clean, readable plain text before copying. `<br>` becomes a newline, `<p>` creates paragraph breaks, lists are formatted with bullets/numbers, HTML entities are decoded, and `<script>`/`<style>` blocks are stripped. Source code files (`.py`, `.sh`, `.js`, etc.) are always copied raw.
 - **Omarchy Quattro & Wayland Native**: Integrates with Omarchy's notification system (`omarchy notification send`) and `wl-copy`.
 - **Desktop Notifications**: Displays toast notifications on success or error without blocking modal dialogs.
 - **Smart Window Tiling Handling**: Floats the file chooser dialog nicely in tiling window managers like Hyprland.
@@ -96,3 +97,51 @@ You can also pass a file directly to copy its contents immediately:
 ```bash
 ./copy-file-content.sh /path/to/document.md
 ```
+
+---
+
+## HTML Conversion Examples
+
+When copying an HTML file, the content is automatically converted to clean text:
+
+**Input (`page.html`):**
+```html
+<h1>Welcome</h1>
+<p>Hello world!<br>This is on a new line.</p>
+<ul>
+  <li>First item</li>
+  <li>Second item</li>
+</ul>
+```
+
+**Clipboard result:**
+```
+Welcome
+
+Hello world!
+This is on a new line.
+
+• First item
+• Second item
+```
+
+The converter handles: `<br>` → newline, `<p>`/`<div>` → paragraph breaks, `<ul>`/`<ol>` → bullet/numbered lists, `<table>` → tab-separated columns, `<pre>` → preserved whitespace, HTML entities → decoded characters, and `<script>`/`<style>`/`<head>` → stripped.
+
+### Standalone HTML-to-Text Converter
+
+You can also use `html_to_text.py` directly:
+
+```bash
+# Convert an HTML file
+python3 html_to_text.py page.html
+
+# Pipe HTML from stdin
+echo "Line 1<br>Line 2" | python3 html_to_text.py
+
+# Force raw output (skip HTML conversion)
+python3 html_to_text.py --raw page.html
+
+# Check if a file contains HTML
+python3 html_to_text.py --check-html page.html && echo "Has HTML"
+```
+
